@@ -52,7 +52,7 @@ function get_cache_files() {
     local max_parallel=${3-16}
     ## Get the cache files running grep in parallel for each top level
     ## cache dir.
-    find $2 -maxdepth 1 -type d | xargs -P $max_parallel -n 1 grep -ERl "^KEY:.*$1" | sort -u
+    find "$2" -maxdepth 1 -type d | xargs -P $max_parallel -n 1 grep -ERl "^KEY:.*$1" | sort -u
 } # get_cache_files
 
 ## Removes an item from the given cache zone.
@@ -62,15 +62,15 @@ function nginx_cache_purge_item() {
     local cache_files
 
     [ -d $2 ] || exit 2
-    cache_files=$(get_cache_files "$1" $2)
+    cache_files=$(get_cache_files "$1" "$2")
 
     ## Act based on grep result.
     if [ -n "$cache_files" ]; then
         ## Loop over all matched items.
-        for i in $cache_files; do
+        for i in "$cache_files"; do
             [ -f $i ] || continue
             echo "Deleting $i from $2."
-            rm $i
+            rm "$i"
         done
     else
         echo "$1 is not cached."
@@ -79,4 +79,4 @@ function nginx_cache_purge_item() {
 } # nginx_cache_purge_item
 
 ## Try to purge the given item from the cache.
-nginx_cache_purge_item $1 $2
+nginx_cache_purge_item "$1" "$2"
