@@ -62,7 +62,7 @@ function nginx_cache_purge_item() {
     local cache_files
 
     [ -d $2 ] || exit 2
-    cache_files=$(get_cache_files "$1" "$2")
+    cache_files=$(get_cache_files "$1" "$2" 1) # With xargs parallel > 1, xargs keeps losing output, around 5 ~ 20 lines in 20k lines. 
 
     ## Act based on grep result.
     if [ -n "$cache_files" ]; then
