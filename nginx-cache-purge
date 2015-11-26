@@ -66,12 +66,17 @@ function nginx_cache_purge_item() {
 
     ## Act based on grep result.
     if [ -n "$cache_files" ]; then
+        local n=0
         ## Loop over all matched items.
         for i in $cache_files; do
             [ -f $i ] || continue
-            echo "Deleting $i from $2."
+            n=$(( n + 1 ))
+            if [[ $n -le 3 ]]; then
+                echo "Deleting $i from $2."
+            fi
             rm "$i"
         done
+        printf '%s cached files were purged.\n' $n
     else
         echo "$1 is not cached."
         exit 3
